@@ -8,6 +8,8 @@ import BrandListView from '@/views/brands/BrandListView.vue'
 import BrandFormView from '@/views/brands/BrandFormView.vue'
 import ModelListView from '@/views/models/ModelListView.vue'
 import ModelFormView from '@/views/models/ModelFormView.vue'
+import GenerationListView from '@/views/generations/GenerationListView.vue'
+import GenerationFormView from '@/views/generations/GenerationFormView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -20,6 +22,9 @@ const router = createRouter({
     { path: '/models', name: 'models.index', component: ModelListView, meta: { requiresAuth: true } },
     { path: '/models/new', name: 'models.create', component: ModelFormView, meta: { requiresAuth: true } },
     { path: '/models/:id/edit', name: 'models.edit', component: ModelFormView, meta: { requiresAuth: true }, props: true },
+    { path: '/generations', name: 'generations.index', component: GenerationListView, meta: { requiresAuth: true } },
+    { path: '/generations/new', name: 'generations.create', component: GenerationFormView, meta: { requiresAuth: true } },
+    { path: '/generations/:id/edit', name: 'generations.edit', component: GenerationFormView, meta: { requiresAuth: true }, props: true },
   ],
 })
 
