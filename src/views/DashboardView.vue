@@ -15,7 +15,8 @@ async function handleLogout() {
 <template>
   <div class="p-8">
     <h1 class="text-2xl font-bold">Dobrodošao, {{ auth.admin?.name }}</h1>
-    <button @click="handleLogout" class="mt-4 text-sm text-red-600">Odjavi se</button>
-    <RouterLink :to="{ name: 'brands.index' }" class="text-blue-600 hover:underline">Marke</RouterLink>
+    <button @click="handleLogout" class="mt-4 text-sm text-red-600">Odjavi se</button> <br>
+    <RouterLink :to="{ name: 'brands.index' }" class="text-blue-600 hover:underline">Marke</RouterLink> <br>
+    <RouterLink :to="{ name: 'models.index' }" class="text-blue-600 hover:underline">Modeli</RouterLink>
   </div>
 </template>

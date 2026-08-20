@@ -6,6 +6,8 @@ import DashboardView from '@/views/DashboardView.vue'
 
 import BrandListView from '@/views/brands/BrandListView.vue'
 import BrandFormView from '@/views/brands/BrandFormView.vue'
+import ModelListView from '@/views/models/ModelListView.vue'
+import ModelFormView from '@/views/models/ModelFormView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -15,6 +17,9 @@ const router = createRouter({
     { path: '/brands', name: 'brands.index', component: BrandListView, meta: { requiresAuth: true } },
     { path: '/brands/new', name: 'brands.create', component: BrandFormView, meta: { requiresAuth: true } },
     { path: '/brands/:id/edit', name: 'brands.edit', component: BrandFormView, meta: { requiresAuth: true }, props: true },
+    { path: '/models', name: 'models.index', component: ModelListView, meta: { requiresAuth: true } },
+    { path: '/models/new', name: 'models.create', component: ModelFormView, meta: { requiresAuth: true } },
+    { path: '/models/:id/edit', name: 'models.edit', component: ModelFormView, meta: { requiresAuth: true }, props: true },
   ],
 })
 
