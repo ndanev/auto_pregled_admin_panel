@@ -12,6 +12,9 @@ import GenerationListView from '@/views/generations/GenerationListView.vue'
 import GenerationFormView from '@/views/generations/GenerationFormView.vue'
 import EngineListView from '@/views/engines/EngineListView.vue'
 import EngineFormView from '@/views/engines/EngineFormView.vue'
+import CarListView from '@/views/cars/CarListView.vue'
+import CarFormView from '@/views/cars/CarFormView.vue'
+
 
 const router = createRouter({
   history: createWebHistory(),
@@ -30,6 +33,9 @@ const router = createRouter({
     { path: '/engines', name: 'engines.index', component: EngineListView, meta: { requiresAuth: true } },
     { path: '/engines/new', name: 'engines.create', component: EngineFormView, meta: { requiresAuth: true } },
     { path: '/engines/:id/edit', name: 'engines.edit', component: EngineFormView, meta: { requiresAuth: true }, props: true },
+    { path: '/cars', name: 'cars.index', component: CarListView, meta: { requiresAuth: true } },
+    { path: '/cars/new', name: 'cars.create', component: CarFormView, meta: { requiresAuth: true } },
+    { path: '/cars/:id/edit', name: 'cars.edit', component: CarFormView, meta: { requiresAuth: true }, props: true },
   ],
 })
 
