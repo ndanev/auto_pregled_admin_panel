@@ -19,6 +19,7 @@ async function handleLogout() {
     <RouterLink :to="{ name: 'brands.index' }" class="text-blue-600 hover:underline">Marke</RouterLink> <br>
     <RouterLink :to="{ name: 'models.index' }" class="text-blue-600 hover:underline">Modeli</RouterLink> <br>
     <RouterLink :to="{ name: 'generations.index' }" class="text-blue-600 hover:underline">Generacije</RouterLink> <br>
-    <RouterLink :to="{ name: 'engines.index' }" class="text-blue-600 hover:underline">Motori</RouterLink>
+    <RouterLink :to="{ name: 'engines.index' }" class="text-blue-600 hover:underline">Motori</RouterLink> <br>
+    <RouterLink :to="{ name: 'cars.index' }" class="text-blue-600 hover:underline">Automobili</RouterLink>
   </div>
 </template>

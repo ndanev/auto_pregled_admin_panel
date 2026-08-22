@@ -122,13 +122,20 @@ onMounted(() => {
             </td>
             <td class="px-4 py-3 text-right space-x-3">
               <RouterLink
+                :to="{ name: 'cars.images', params: { id: car.id } }"
+                class="text-blue-600 hover:underline"
+              >
+                Slike
+              </RouterLink>
+              <RouterLink
                 :to="{ name: 'cars.edit', params: { id: car.id } }"
                 class="text-blue-600 hover:underline"
               >
                 Izmeni
               </RouterLink>
               <button @click="confirmDelete(car)" class="text-red-600 hover:underline">
-                Obriši
+                <!-- Obriši -->
+                 x
               </button>
             </td>
           </tr>

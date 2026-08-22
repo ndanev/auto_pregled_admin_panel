@@ -14,7 +14,7 @@ import EngineListView from '@/views/engines/EngineListView.vue'
 import EngineFormView from '@/views/engines/EngineFormView.vue'
 import CarListView from '@/views/cars/CarListView.vue'
 import CarFormView from '@/views/cars/CarFormView.vue'
-
+import CarImagesView from '@/views/cars/CarImagesView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -36,6 +36,7 @@ const router = createRouter({
     { path: '/cars', name: 'cars.index', component: CarListView, meta: { requiresAuth: true } },
     { path: '/cars/new', name: 'cars.create', component: CarFormView, meta: { requiresAuth: true } },
     { path: '/cars/:id/edit', name: 'cars.edit', component: CarFormView, meta: { requiresAuth: true }, props: true },
+    { path: '/cars/:id/images', name: 'cars.images', component: CarImagesView, meta: { requiresAuth: true }, props: true },
   ],
 })
 
