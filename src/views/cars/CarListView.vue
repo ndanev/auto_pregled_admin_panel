@@ -8,12 +8,33 @@ import { CAR_STATUS_LABELS } from '@/types/car'
 import type { Car, CarStatus } from '@/types/car'
 import type { Generation } from '@/types/generation'
 
+import { generateAiAnalysis } from '@/api/aiAnalysis'
+import type { AiAnalysis } from '@/types/aiAnalysis'
+
 const cars = ref<Car[]>([])
 const generations = ref<Generation[]>([])
 const selectedGenerationId = ref<number | null>(null)
 const selectedStatus = ref<CarStatus | null>(null)
 const isLoading = ref(true)
 const carToDelete = ref<Car | null>(null)
+
+const generatingCarId = ref<number | null>(null)
+const analysisPreview = ref<AiAnalysis | null>(null)
+const analysisError = ref<string | null>(null)
+
+async function handleGenerateAnalysis(car: Car) {
+  generatingCarId.value = car.id
+  analysisError.value = null
+  try {
+    const analysis = await generateAiAnalysis(car.id)
+    analysisPreview.value = analysis
+    car.has_ai_analysis = true
+  } catch (err: any) {
+    analysisError.value = err.response?.data?.message ?? 'Generisanje nije uspelo.'
+  } finally {
+    generatingCarId.value = null
+  }
+}
 
 async function loadCars() {
   isLoading.value = true
@@ -120,7 +141,7 @@ onMounted(() => {
               <span v-if="car.has_ai_analysis" class="text-green-600">✓</span>
               <span v-else class="text-gray-300">—</span>
             </td>
-            <td class="px-4 py-3 text-right space-x-3">
+            <!-- <td class="px-4 py-3 text-right space-x-3">
               <RouterLink
                 :to="{ name: 'cars.images', params: { id: car.id } }"
                 class="text-blue-600 hover:underline"
@@ -134,8 +155,25 @@ onMounted(() => {
                 Izmeni
               </RouterLink>
               <button @click="confirmDelete(car)" class="text-red-600 hover:underline">
-                <!-- Obriši -->
                  x
+              </button>
+            </td> -->
+            <td class="px-4 py-3 text-right space-x-3">
+              <button
+                @click="handleGenerateAnalysis(car)"
+                :disabled="generatingCarId === car.id"
+                class="text-purple-600 hover:underline disabled:opacity-50"
+              >
+                {{ generatingCarId === car.id ? 'Generisanje...' : 'Generiši AI analizu' }}
+              </button>
+              <RouterLink :to="{ name: 'cars.images', params: { id: car.id } }" class="text-blue-600 hover:underline">
+                Slike
+              </RouterLink>
+              <RouterLink :to="{ name: 'cars.edit', params: { id: car.id } }" class="text-blue-600 hover:underline">
+                Izmeni
+              </RouterLink>
+              <button @click="confirmDelete(car)" class="text-red-600 hover:underline">
+                Obriši
               </button>
             </td>
           </tr>
@@ -175,5 +213,46 @@ onMounted(() => {
         </DialogPanel>
       </div>
     </Dialog>
+
+    <Dialog :open="analysisPreview !== null" @close="analysisPreview = null" class="relative z-50">
+      <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
+      <div class="fixed inset-0 flex items-center justify-center p-4">
+        <DialogPanel class="bg-white rounded-lg p-6 max-w-2xl w-full shadow-xl max-h-[80vh] overflow-y-auto">
+          <DialogTitle class="text-lg font-semibold text-gray-900 mb-4">
+            AI analiza generisana
+          </DialogTitle>
+          <div class="flex gap-4 mb-4 text-sm">
+            <span class="bg-gray-100 px-3 py-1 rounded-full">
+              Ocena: {{ analysisPreview?.overall_rating ?? '—' }}
+            </span>
+            <span class="bg-gray-100 px-3 py-1 rounded-full">
+              Pouzdanost: {{ analysisPreview?.reliability_score ?? '—' }}
+            </span>
+            <span
+              v-if="analysisPreview?.has_insufficient_data"
+              class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full"
+            >
+              Nepotpuni podaci
+            </span>
+          </div>
+          <pre class="bg-gray-50 p-4 rounded-md text-xs overflow-x-auto">{{ JSON.stringify(analysisPreview?.content, null, 2) }}</pre>
+          <div class="mt-4 flex justify-end">
+            <button
+              @click="analysisPreview = null"
+              class="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+            >
+              Zatvori
+            </button>
+          </div>
+        </DialogPanel>
+      </div>
+    </Dialog>
+
+    <div
+      v-if="analysisError"
+      class="fixed bottom-4 right-4 bg-red-600 text-white px-4 py-3 rounded-md shadow-lg text-sm"
+    >
+      {{ analysisError }}
+    </div>
   </div>
 </template>
