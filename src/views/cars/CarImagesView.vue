@@ -5,6 +5,7 @@ import { fetchImages, uploadImages, setMainImage, reorderImages, deleteImage } f
 import { fetchCar } from '@/api/cars'
 import type { CarImage } from '@/types/image'
 import type { Car } from '@/types/car'
+import PageHeader from '@/components/ui/PageHeader.vue'
 
 const route = useRoute()
 const carId = computed(() => Number(route.params.id))
@@ -87,83 +88,50 @@ onMounted(loadData)
 </script>
 
 <template>
-  <div class="p-8 max-w-4xl mx-auto">
-    <div class="mb-6">
-      <RouterLink :to="{ name: 'cars.index' }" class="text-sm text-blue-600 hover:underline">
-        ← Nazad na automobile
-      </RouterLink>
-      <h1 class="text-2xl font-bold text-gray-900 mt-2">
-        Slike — {{ car ? carLabel(car) : '' }}
-      </h1>
-    </div>
+  <div>
+    <PageHeader :title="car ? `Slike — ${carLabel(car)}` : 'Slike'">
+      <template #actions>
+        <RouterLink :to="{ name: 'cars.index' }" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">← Nazad</RouterLink>
+      </template>
+    </PageHeader>
 
-    <div v-if="isLoading" class="text-gray-500 text-sm">Učitavanje...</div>
+    <div class="p-6">
+      <div v-if="isLoading" class="text-sm text-gray-500">Učitavanje...</div>
 
-    <template v-else>
-      <div
-        @dragover.prevent="isDraggingOver = true"
-        @dragleave.prevent="isDraggingOver = false"
-        @drop.prevent="onDrop"
-        class="border-2 border-dashed rounded-lg p-8 text-center mb-6 transition-colors"
-        :class="isDraggingOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300'"
-      >
-        <p class="text-gray-500 mb-2">Prevuci slike ovde ili</p>
-        <label class="inline-block cursor-pointer text-blue-600 font-medium hover:underline">
-          izaberi fajlove
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            class="hidden"
-            @change="onFileInputChange"
-          />
-        </label>
-        <p v-if="isUploading" class="mt-3 text-sm text-gray-500">Upload u toku...</p>
-      </div>
-
-      <div v-if="images.length === 0" class="text-center text-gray-400 py-8">
-        Nema dodatih slika.
-      </div>
-
-      <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+      <template v-else>
         <div
-          v-for="image in images"
-          :key="image.id"
-          draggable="true"
-          @dragstart="onDragStart(image)"
-          @dragover.prevent
-          @drop.prevent="onDropReorder(image)"
-          class="relative group rounded-lg overflow-hidden border-2 cursor-move"
-          :class="image.is_main ? 'border-blue-500' : 'border-transparent'"
+          @dragover.prevent="isDraggingOver = true"
+          @dragleave.prevent="isDraggingOver = false"
+          @drop.prevent="onDrop"
+          class="border-2 border-dashed rounded-lg p-8 text-center mb-6 transition-colors bg-white"
+          :class="isDraggingOver ? 'border-indigo-400 bg-indigo-50' : 'border-gray-300'"
         >
-          <img :src="image.thumbnail_url" :alt="`Slika ${image.id}`" class="w-full h-32 object-cover" />
+          <p class="text-gray-500 mb-2">Prevuci slike ovde ili</p>
+          <label class="inline-block cursor-pointer text-indigo-600 font-medium hover:underline">
+            izaberi fajlove
+            <input type="file" accept="image/*" multiple class="hidden" @change="onFileInputChange" />
+          </label>
+          <p v-if="isUploading" class="mt-3 text-sm text-gray-500">Upload u toku...</p>
+        </div>
 
-          <span
-            v-if="image.is_main"
-            class="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full"
-          >
-            Glavna
-          </span>
+        <div v-if="images.length === 0" class="text-center text-gray-400 py-8">Nema dodatih slika.</div>
 
+        <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           <div
-            class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2"
+            v-for="image in images" :key="image.id" draggable="true"
+            @dragstart="onDragStart(image)" @dragover.prevent @drop.prevent="onDropReorder(image)"
+            class="relative group rounded-lg overflow-hidden border-2 cursor-move bg-white"
+            :class="image.is_main ? 'border-indigo-500' : 'border-transparent'"
           >
-            <button
-              v-if="!image.is_main"
-              @click="handleSetMain(image)"
-              class="bg-white text-gray-900 text-xs px-2 py-1 rounded hover:bg-gray-100"
-            >
-              Postavi kao glavnu
-            </button>
-            <button
-              @click="handleDelete(image)"
-              class="bg-red-600 text-white text-xs px-2 py-1 rounded hover:bg-red-700"
-            >
-              Obriši
-            </button>
+            <img :src="image.thumbnail_url" :alt="`Slika ${image.id}`" class="w-full h-32 object-cover" />
+            <span v-if="image.is_main" class="absolute top-2 left-2 bg-indigo-600 text-white text-xs px-2 py-1 rounded-full">Glavna</span>
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+              <button v-if="!image.is_main" @click="handleSetMain(image)" class="bg-white text-gray-900 text-xs px-2 py-1 rounded hover:bg-gray-100">Postavi kao glavnu</button>
+              <button @click="handleDelete(image)" class="bg-red-600 text-white text-xs px-2 py-1 rounded hover:bg-red-700">Obriši</button>
+            </div>
           </div>
         </div>
-      </div>
-    </template>
+      </template>
+    </div>
   </div>
 </template>

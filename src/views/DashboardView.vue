@@ -1,25 +1,47 @@
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth'
-import { useRouter } from 'vue-router'
-import { RouterLink } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { fetchDashboardStats } from '@/api/dashboard'
+import type { DashboardStats } from '@/types/dashboard'
+import PageHeader from '@/components/ui/PageHeader.vue'
+import StatCard from '@/components/ui/StatCard.vue'
+import BarChart from '@/components/ui/BarChart.vue'
 
-const auth = useAuthStore()
-const router = useRouter()
+const stats = ref<DashboardStats | null>(null)
+const isLoading = ref(true)
 
-async function handleLogout() {
-  await auth.logout()
-  router.push({ name: 'login' })
-}
+onMounted(async () => {
+  stats.value = await fetchDashboardStats()
+  isLoading.value = false
+})
 </script>
 
 <template>
-  <div class="p-8">
-    <h1 class="text-2xl font-bold">Dobrodošao, {{ auth.admin?.name }}</h1>
-    <button @click="handleLogout" class="mt-4 text-sm text-red-600">Odjavi se</button> <br>
-    <RouterLink :to="{ name: 'brands.index' }" class="text-blue-600 hover:underline">Marke</RouterLink> <br>
-    <RouterLink :to="{ name: 'models.index' }" class="text-blue-600 hover:underline">Modeli</RouterLink> <br>
-    <RouterLink :to="{ name: 'generations.index' }" class="text-blue-600 hover:underline">Generacije</RouterLink> <br>
-    <RouterLink :to="{ name: 'engines.index' }" class="text-blue-600 hover:underline">Motori</RouterLink> <br>
-    <RouterLink :to="{ name: 'cars.index' }" class="text-blue-600 hover:underline">Automobili</RouterLink>
+  <div>
+    <PageHeader title="Pregled" />
+
+    <div class="p-6">
+      <div v-if="isLoading" class="text-sm text-gray-500">Učitavanje...</div>
+
+      <template v-else-if="stats">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StatCard label="Automobili" :value="stats.total_cars" :hint="`${stats.published_cars} objavljeno`" />
+          <StatCard label="Marke" :value="stats.total_brands" />
+          <StatCard label="Modeli" :value="stats.total_models" />
+          <StatCard label="Motori" :value="stats.total_engines" />
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+          <StatCard label="Generacije" :value="stats.total_generations" />
+          <StatCard label="Slike" :value="stats.total_images" />
+          <StatCard label="AI analize" :value="stats.cars_with_ai_analysis" :hint="`od ${stats.total_cars} automobila`" />
+          <StatCard label="Nacrti" :value="stats.draft_cars" />
+        </div>
+
+        <div class="bg-white rounded-lg border border-gray-200 p-6 mt-6">
+          <h2 class="text-sm font-medium text-gray-900 mb-4">Dodati automobili — poslednjih 6 meseci</h2>
+          <BarChart :data="stats.cars_per_month" />
+        </div>
+      </template>
+    </div>
   </div>
 </template>
