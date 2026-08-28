@@ -24,3 +24,12 @@ export async function updateBrand(id: number, payload: BrandFormData): Promise<B
 export async function deleteBrand(id: number): Promise<void> {
   await api.delete(`/api/admin/brands/${id}`)
 }
+
+export async function uploadBrandLogo(brandId: number, file: File): Promise<Brand> {
+  const formData = new FormData()
+  formData.append('logo', file)
+  const response = await api.post(`/api/admin/brands/${brandId}/logo`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+  return response.data.data
+}
